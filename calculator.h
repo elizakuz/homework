@@ -19,12 +19,8 @@ void add(int n, int_list * l){
 void print(node_t * hd){
 	node_t * p = hd;
      	for(;p != NULL; p = p->next){
-		if(p->next != NULL){
-			printf("%d", p->v);
-		}else {
-			printf("%d\n", p->v);
-			break;
-		}
+		printf("%d", p->v);
+		
 	}		
 }
 long_num long_numCreate(char c) {
@@ -34,10 +30,10 @@ long_num long_numCreate(char c) {
 	int_list l;
 	l.count = 0;
 	l.head = NULL;	
-	while (c != '\n') {
+	while (c != 13) {
 		add(c - '0', &l);
 		l.count++;
-		scanf("%c", &c);
+		c = getchar();
 	}
 	x.digits = l;
 	return x;
@@ -236,8 +232,44 @@ long_num long_numDiv(long_num x, long_num y){
 	div.digits.count = 1;
 	add(0, &div.digits);
 	if (x.digits.count <= y.digits.count) {
-		if (x.digits.count < y.digits.count) {
-			div.sign = 1;
+		if (x.digits.count < y.digits.count) {		
+			if (x.sign == -1 ) {
+				node_t * d = div.digits.head;
+				d->v++;
+				if (d->v == 10){
+					d->v = 0;
+					int s;
+					for (s = 1; s < div.digits.count; s++){
+						if (d->next->v != 9){
+							d->next->v++;
+							break;
+						} 
+						d = d->next;
+					}
+					if (d->v == 9){
+						add(0, &div.digits);
+						div.digits.count++;
+						d = div.digits.head;
+						for (s = 1; s < div.digits.count; s++){
+							d->v = 0;
+							d =d->next;
+						}
+						d->v = 1;
+					}	
+					if (d->v == 0 && d->next == NULL) {
+						add(0, &div.digits);
+						div.digits.count++;
+						div.digits.head->next->v = 1;
+						d = div.digits.head;
+					}	
+				}
+				if (y.sign == -1) {
+					div.sign = 1;
+				} else {
+					div.sign = -1;
+				}
+			}
+			else {div.sign = 1;}
 			return div;
 		} else {
 			int_list x2, y2;
@@ -247,8 +279,52 @@ long_num long_numDiv(long_num x, long_num y){
 			node_t * q = y2.head;
 			int w;
 			for (w = 0; w < x2.count; w++) {
-				if (p->v < q->v) {
+				if (p->v < q->v) {		
+					if (x.sign == -1 ) {
+						node_t * d = div.digits.head;
+						d->v++;
+				if (d->v == 10){
+						d->v = 0;
+						int s;
+						for (s = 1; s < div.digits.count; s++){
+							if (d->next->v != 9){
+								d->next->v++;
+								break;
+							} 
+							d = d->next;
+						}
+						if (d->v == 9){
+							add(0, &div.digits);
+							div.digits.count++;
+							d = div.digits.head;
+							for (s = 1; s < div.digits.count; s++){
+								d->v = 0;
+								d =d->next;
+							}
+							d->v = 1;
+						}	
+						if (d->v == 0 && d->next == NULL) {
+							add(0, &div.digits);
+							div.digits.count++;
+							div.digits.head->next->v = 1;
+							d = div.digits.head;
+						}	
+				}
+				if (y.sign == -1) {
 					div.sign = 1;
+				} else {
+					div.sign = -1;
+				}
+			}
+					
+					
+					
+					
+					else {
+						div.sign = 1;
+					}
+					
+					
 					return div;
 					break; 
 				}	
@@ -322,6 +398,11 @@ long_num long_numDiv(long_num x, long_num y){
 						d = div.digits.head;
 					}	
 				}
+				if (y.sign == -1) {
+					div.sign = 1;
+				} else {
+					div.sign = -1;
+				}
 			}
 			i = 0;
 		}			  
@@ -344,7 +425,7 @@ long_num long_numDiv(long_num x, long_num y){
 				q = q->next;
 			}
 			if (p->v < q->v){
-				if(x.sign == -1){
+				if(x.sign == -1 ){
 					node_t * d = div.digits.head;
 					d->v++;
 					if (d->v == 10){
@@ -372,6 +453,11 @@ long_num long_numDiv(long_num x, long_num y){
 							div.digits.head->next->v = 1;
 							d = div.digits.head;
 						}	
+					}
+					if (y.sign == -1) {
+					div.sign = 1;
+					} else {
+					div.sign = -1;
 					}
 				}
 				i = 0;
