@@ -20,6 +20,7 @@ int main(int argc, char **argv){
 			case '0'...'9': new = long_numCreate(s);
 				new.digits = long_numReverse(new.digits);
 				push(new); 
+				long_num_clean(new.digits);
 				break;
 			case '+':
 				if((hd != NULL) & (hd->next != NULL)){
@@ -33,8 +34,9 @@ int main(int argc, char **argv){
 						new = long_numDiv(el1, el2);
 					}
 					push(new);
+					long_num_clean(new.digits);
 				} else {
-					printf("Not enough arguments1\n");
+					printf("Not enough arguments\n");
 					stack_clean();
 					return(1);
 				}
@@ -52,6 +54,7 @@ int main(int argc, char **argv){
 							new = long_numAdd(el1, el2);
 						}	
 						push(new);
+						long_num_clean(new.digits);
 					} else {	
 						printf("Not enough arguments\n");
 						stack_clean();
@@ -62,6 +65,7 @@ int main(int argc, char **argv){
 					new.sign = -1;
 					new.digits = long_numReverse(new.digits);
 					push(new); 
+					free(new.digits.head);
 				} 
 				break;
 			case '*': if((hd != NULL) & (hd->next != NULL)){
@@ -71,6 +75,7 @@ int main(int argc, char **argv){
 					el2.digits = long_numReverse(el2.digits);
 					new = long_numMult(el1, el2);
 					push(new);
+					long_num_clean(new.digits);
 				} else {
 					printf("Not enough arguments\n");
 					stack_clean();
@@ -87,6 +92,7 @@ int main(int argc, char **argv){
 						new = long_numDiv(el1, el2);
 						new.digits = long_numReverse(new.digits);
 						push(new);
+						long_num_clean(new.digits);
 					} else { 
 						printf("Division by zero\n");
 						stack_clean();
@@ -106,6 +112,7 @@ int main(int argc, char **argv){
 					}
 					print(new.digits.head);
 					printf("\n");
+					long_num_clean(new.digits);
 					break;
 				} else {
 					printf("Not enough arguments\n");
