@@ -10,44 +10,49 @@ typedef struct long_num {
 	int sign;
 	int_list digits;
 } long_num;
-void add(int n, int_list * l){
-	node_t *p = (node_t *) malloc(sizeof (node_t));
-	p->v = n;
-	p->next = l->head;
-	l->head = p;	
+node_t * del;
+void long_num_clean(int_list j) {
+	node_t * f;
+	while(j.head->next != NULL){
+		f = j.head;
+		j.head = j.head->next;
+		free(f);
+	}
 }
-void print(node_t * hd){
-	node_t * p = hd;
-     	for(;p != NULL; p = p->next){
-		printf("%d", p->v);
-		
+void add(int n, int_list * l) {
+	node_t *t = malloc(sizeof (node_t));
+	t->v = n;
+	t->next = l->head;
+	l->head = t;	
+}
+void print(node_t * hd) {
+	node_t * t = hd;
+     	for(;t != NULL; t = t->next){
+		printf("%d", t->v);
 	}		
 }
 long_num long_numCreate(char c) {
 	long_num x;
 	x.digits.head = NULL;
 	x.sign = 1;
-	int_list l;
-	l.count = 0;
-	l.head = NULL;	
+	x.digits.count = 0;	
 	while (c != 13) {
-		add(c - '0', &l);
-		l.count++;
+		add(c - '0', &x.digits);
+		x.digits.count++;
 		c = getchar();
 	}
-	x.digits = l;
 	return x;
 }
 int_list long_numReverse(int_list x) {
-	node_t * r = x.head;
+	node_t * t = x.head;
 	int i;
 	int_list k;
 	k.head= NULL;
-	for (i = 0; i < x.count; i++) {
-		add(r->v, &k);	
-		r = r->next;
-	}
 	k.count = x.count;
+	for (i = 0; i < x.count; i++) {
+		add(t->v, &k);	
+		t = t->next;
+	}
 	return k;
 }
 long_num long_numAdd(long_num x, long_num y) {
@@ -66,18 +71,21 @@ long_num long_numAdd(long_num x, long_num y) {
 		s = (x.digits.head->v + y.digits.head->v + ost) % 10;
 		ost = (x.digits.head->v + y.digits.head->v + ost) / 10;
 		add(s, &sum.digits);
-		free(x.digits.head);
+		del = x.digits.head;
 		x.digits.head = x.digits.head->next;
-		free(y.digits.head);
+		free(del);
+		del = y.digits.head;
 		y.digits.head = y.digits.head->next;
+		free(del);
 		sum.digits.count++;
 	}
 	for (x.digits.count; x.digits.count != 0; x.digits.count--) {
 		s = (x.digits.head->v + ost) % 10;
 		add(s, &sum.digits);
 		ost = (x.digits.head->v + ost) / 10;
-		free(x.digits.head);
+		del = x.digits.head;
 		x.digits.head = x.digits.head->next;
+		free(del);
 		sum.digits.count++;
 	}
 	if (ost == 1 ) {
@@ -122,6 +130,8 @@ long_num long_numSub(long_num x, long_num y) {
 			p = p->next;	 	
 			q = q->next;
 		}
+		long_num_clean(x2);
+		long_num_clean(y2);
 	}
 	node_t * p = y.digits.head;
 	for (y.digits.count; y.digits.count != 0; y.digits.count--, x.digits.count--) {
@@ -133,8 +143,9 @@ long_num long_numSub(long_num x, long_num y) {
 			ost = 0;
 		}	
 		add(m, &sub.digits);
-		free(x.digits.head);
+		del = x.digits.head;
 		x.digits.head = x.digits.head->next;
+		free(del);
 		p = p->next;
 		sub.digits.count++;
 	}
@@ -147,8 +158,9 @@ long_num long_numSub(long_num x, long_num y) {
 			ost = 0;
 		}
 		add(m, &sub.digits);
-		free(x.digits.head);
+		del = x.digits.head;
 		x.digits.head = x.digits.head->next;
+		free(del);
 		sub.digits.count++;
 	}
 	while (sub.digits.head->v == 0){
@@ -205,16 +217,17 @@ long_num long_numMult(long_num x, long_num y){
 		}
 		mult.digits = long_numReverse(mult.digits); 
 		res = long_numAdd(res, mult);
-		
 		res.digits = long_numReverse(res.digits);
-		free(y.digits.head);
+		del = y.digits.head;
 		y.digits.head = y.digits.head->next;
+		free(del);
 	}
 	res.digits = long_numReverse(res.digits);
 	while (res.digits.head->v == 0){
-		free(res.digits.head);
-		res.digits.count--;
+		del = res.digits.head;
 		res.digits.head = res.digits.head->next;
+		free(del);
+		res.digits.count--;
 		if (res.digits.head == NULL){
 			break;
 		}
@@ -224,6 +237,7 @@ long_num long_numMult(long_num x, long_num y){
 		res.digits.count = 1;
 	}
 	res.sign = zn;
+	long_num_clean(x.digits);
 	return res;		
 }
 long_num long_numDiv(long_num x, long_num y){
@@ -495,9 +509,13 @@ long_num long_numDiv(long_num x, long_num y){
 				}
 				i = 0;
 				break;
-			}	
+			}
+			long_num_clean(x2);
+			long_num_clean(y2);	
 		 }
 	}
+	long_num_clean(x.digits);
+	long_num_clean(y.digits);
 	div.sign = zn;
 	return div;
 }
