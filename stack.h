@@ -6,7 +6,7 @@ typedef struct stack{
 } stack;
 stack *hd = NULL, *p, *q, *r;
 void push(long_num n){
-	stack *p = (stack *) malloc(sizeof (stack));
+	p = malloc(sizeof (stack));
 	p->a = n;
 	p->next = hd;
 	hd = p;	
@@ -15,7 +15,7 @@ long_num pop(){
 	long_num top;
 	top = hd->a;
 	p = hd;
-	hd = hd->next;	
+	hd = hd->next;
 	free(p);
 	return top;
 }
